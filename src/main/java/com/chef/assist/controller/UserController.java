@@ -113,13 +113,13 @@ public class UserController {
 
             String username = request.getUsername();
             if(!username.matches("[a-zA-Z0-9]*")){
-                return CaResponse.makeResponse(false, "用户名只允许字母和数字的组合", null);
+                return CaResponse.makeResponse(false, "usernameOnlyAllowsAlphanumericCharacters", null);
             }
             user.setUsername(username);
             userMapper.insert(user);
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
-                return CaResponse.makeResponse(false,"用户名已存在", null);
+                return CaResponse.makeResponse(false,"usernameAlreadyExists", null);
             }
             return CaResponse.makeResponse(false, "创建用户失败:"+e.getMessage(), null);
         }
@@ -146,11 +146,11 @@ public class UserController {
         //先检查原密码
         String shouldBePasswordEnc = SecurityUtil.generateStorngPasswordHash(changepassRequest.getPassword(), user.getSalt());
         if(!shouldBePasswordEnc.equals(user.getPassword())){
-            return CaResponse.makeResponse(false, "原密码不对哦", user.getUsername());
+            return CaResponse.makeResponse(false, "incorrectOldPassword", user.getUsername());
         }
 
         if(changepassRequest.getNewPassword().equals(changepassRequest.getPassword())){
-            return CaResponse.makeResponse(false, "新密码不能和原密码一样哦", user.getUsername());
+            return CaResponse.makeResponse(false, "newPasswordCannotMatchOldPassword", user.getUsername());
         }
 
         //原密码正确的情况下做以下更新
@@ -159,7 +159,7 @@ public class UserController {
 
         userMapper.update(user);
 
-        return CaResponse.makeResponse(true, "更新密码成功", user.getUsername());
+        return CaResponse.makeResponse(true, "passwordUpdateSuccessful", user.getUsername());
     }
 
     @DeleteMapping("/{id}")
@@ -170,7 +170,7 @@ public class UserController {
         }
 
         userMapper.deleteById(id);
-        return CaResponse.makeResponse(true,"成功删除用户", id);
+        return CaResponse.makeResponse(true,"userDeletedSuccessfully", id);
     }
 
     @PutMapping("/password-reset/{id}")

@@ -42,9 +42,9 @@ public class DishProducerController {
             return CaResponse.makeResponse(true, "成功创建厨位:"+dishProducer.getProducerNumber(),dishProducer.getProducerNumber());
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
-                return CaResponse.makeResponse(false, "已存在同名厨位", dishProducer.getProducerNumber());
+                return CaResponse.makeResponse(false, "duplicateKitchenStationName", dishProducer.getProducerNumber());
             }
-            return CaResponse.makeResponse(false, "未知错误",null);
+            return CaResponse.makeResponse(false, "unknownError",null);
         }
     }
 
@@ -151,12 +151,12 @@ public class DishProducerController {
             dishProducerMapper.update(dishProducer);
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
-                return CaResponse.makeResponse(false, "已存在同名厨位", id );
+                return CaResponse.makeResponse(false, "duplicateKitchenStationName", id );
             }
-            return CaResponse.makeResponse(false, "更新厨位未知错误", id );
+            return CaResponse.makeResponse(false, "unknownErrorUpdatingKitchenStation", id );
         }
 
-        return CaResponse.makeResponse(true, "成功更新厨位信息", id );
+        return CaResponse.makeResponse(true, "kitchenStationUpdatedSuccessfully", id );
     }
 
     @DeleteMapping("/{id}")
@@ -165,7 +165,7 @@ public class DishProducerController {
         DishProducer dishProducer = dishProducerMapper.findById(id);
 
         if(!KitchenConstants.OFFLINE.equals(dishProducer.getStatus())){
-            return CaResponse.makeResponse(false, "请先下线该厨位", id);
+            return CaResponse.makeResponse(false, "pleaseLogoutKitchenStationFirst", id);
         }
         try{
             dishProducerMapper.deleteById(id);
@@ -174,7 +174,7 @@ public class DishProducerController {
                 return CaResponse.makeResponse(false,"该厨位被引用，不能删除", id);
             }
         }
-        return CaResponse.makeResponse(true,"成功删除厨位", id);
+        return CaResponse.makeResponse(true,"kitchenStationDeletedSuccessfully", id);
     }
 
     @PutMapping("/status/{id}")
@@ -182,17 +182,17 @@ public class DishProducerController {
         DishProducer dishProducer = dishProducerMapper.findById(id);
         String currentStatus = dishProducer.getStatus();
         if(KitchenConstants.ONLINE.equals(currentStatus) && KitchenConstants.OFFLINE.equals(req.getStatus())){
-            return CaResponse.makeResponse(false, "请先切换至阻挡状态", null);
+            return CaResponse.makeResponse(false, "pleaseSwitchToBlockedStatusFirst", null);
         }
 
         if(KitchenConstants.BLOCKING.equals(currentStatus) && KitchenConstants.OFFLINE.equals(req.getStatus())){
             // if no dishes assigned to this kit
             if(orderItemMapper.countActiveUnservedByKitId(id)>0){
-                return CaResponse.makeResponse(false, "请先完成所有的菜品制作再下线", null);
+                return CaResponse.makeResponse(false, "pleaseFinishAllDishPreparationsBeforeLogout", null);
             }
         }
 
         dishProducerMapper.updateStatus(id, req.getStatus());
-        return CaResponse.makeResponse(true,"成功更新厨位状态", id);
+        return CaResponse.makeResponse(true,"kitchenStationStatusUpdatedSuccessfully", id);
     }
 }

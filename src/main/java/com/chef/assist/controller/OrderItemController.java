@@ -46,16 +46,16 @@ public class OrderItemController {
         OrderItem orderItem = orderItemMapper.findById(request.getItemId());
         // not equal to unassigned
         if(!OrderConstants.ORDER_ITEM_UNASSIGNED.equals(orderItem.getStatus())){
-            return CaResponse.makeResponse(false, "该条目未处于未分配状态", request.getItemId());
+            return CaResponse.makeResponse(false, "itemNotInUnassignedStatus", request.getItemId());
         }
 
         // if count =0 just delete this item
         if(request.getCount()<=0){
             orderItemMapper.deleteById(request.getItemId());
-            return CaResponse.makeResponse(true, "已删除条目", request.getItemId());
+            return CaResponse.makeResponse(true, "itemDeleted", request.getItemId());
         }else{
             orderItemMapper.updateItemCount(request.getItemId(), request.getCount());
-            return CaResponse.makeResponse(true, "成功更新条目数", request.getItemId());
+            return CaResponse.makeResponse(true, "itemCountUpdatedSuccessfully", request.getItemId());
         }
     }
 
@@ -68,13 +68,13 @@ public class OrderItemController {
         Order order = orderMapper.findById(orderId);
         if(!OrderConstants.ORDER_ACTIVE.equals(order.getOrderStatus())){
             // not active
-            return CaResponse.makeResponse(false,"不在进行中的订单不能增添条目", null);
+            return CaResponse.makeResponse(false,"cannotAddItemToNonOngoingOrder", null);
         }
 
         // check if this table already bind other order
         Integer cnt = orderItemMapper.countActiveOrderItemByTableIdAndNotOrderId(orderItem.getTableId(), orderItem.getOrderId());
         if(cnt>0){
-            return CaResponse.makeResponse(false,"该桌已有其他活跃订单绑定", null);
+            return CaResponse.makeResponse(false,"tableAlreadyHasActiveOrder", null);
         }
 
         // check if order, dish, table, active, unassigned already has an item there
@@ -129,14 +129,14 @@ public class OrderItemController {
     public CaResponse finishCooking(@PathVariable("itemId") Long itemId){
         orderItemMapper.updateItemStatusWithTimestamp(itemId, OrderConstants.ORDER_ITEM_READY_TO_SERVE);
 
-        return CaResponse.makeResponse(true,"成功更新条目状态", itemId);
+        return CaResponse.makeResponse(true,"itemStatusUpdatedSuccessfully", itemId);
     }
 
     @PutMapping("/served/{itemId}")
     public CaResponse served(@PathVariable("itemId") Long itemId){
         orderItemMapper.updateItemStatusWithTimestamp(itemId, OrderConstants.ORDER_ITEM_SERVED);
 
-        return CaResponse.makeResponse(true,"成功更新条目状态", itemId);
+        return CaResponse.makeResponse(true,"itemStatusUpdatedSuccessfully", itemId);
     }
 
     @PutMapping("/description")
@@ -146,10 +146,10 @@ public class OrderItemController {
         }catch (Exception e){
             LOG.error(e.getMessage());
             if(e instanceof DataIntegrityViolationException){
-                return CaResponse.makeResponse(false,"备注数据太长哦(づ￣ 3￣)づ", null);
+                return CaResponse.makeResponse(false,"备注数据太长", null);
             }
         }
 
-        return CaResponse.makeResponse(true, "成功更新条目备注", request.getItemId());
+        return CaResponse.makeResponse(true, "itemNoteUpdatedSuccessfully", request.getItemId());
     }
 }

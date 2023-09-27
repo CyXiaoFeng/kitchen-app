@@ -68,12 +68,12 @@ public class DishController {
     public CaResponse deleteDish(@PathVariable Long id){
         try{
             dishMapper.delete(id);
-            return CaResponse.makeResponse(true, "成功删除菜品", id);
+            return CaResponse.makeResponse(true, "successfullyDeletedDish", id);
         }catch (Exception e){
             if(e instanceof DataIntegrityViolationException){
                 return CaResponse.makeResponse(false, "不能删除该菜品，因其被其他实体引用", id);
             }
-            return CaResponse.makeResponse(false, "未知错误", id);
+            return CaResponse.makeResponse(false, "unknownError", id);
         }
     }
 
@@ -104,9 +104,9 @@ public class DishController {
             return CaResponse.makeResponse(true, "成功创建菜品:"+dish.getName(), dish.getId());
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
-                return CaResponse.makeResponse(false, "菜品已存在", null);
+                return CaResponse.makeResponse(false, "dishAlreadyExists", null);
             }
-            return CaResponse.makeResponse(false, "创建菜品失败", null);
+            return CaResponse.makeResponse(false, "failedToCreateDish", null);
         }
     }
 
@@ -143,7 +143,7 @@ public class DishController {
             dishMapper.update(origin);
             return CaResponse.makeResponse(true, "成功更新菜品:"+dish.getName(), dish.getId());
         }catch (Exception e){
-            return CaResponse.makeResponse(false, "更新菜品失败", null);
+            return CaResponse.makeResponse(false, "failedToUpdateDish", null);
         }
     }
 
@@ -201,6 +201,6 @@ public class DishController {
         dish.setThumbnail(thumbnailBase64);
         dishMapper.update(dish);
 
-        return CaResponse.makeResponse(true,"成功上传缩略图", thumbnailBase64);
+        return CaResponse.makeResponse(true,"thumbnailUploadedSuccessfully", thumbnailBase64);
     }
 }

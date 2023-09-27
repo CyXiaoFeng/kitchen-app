@@ -53,7 +53,7 @@ public class OrderController {
 
         orderMapper.insert(order);
 
-        return CaResponse.makeResponse(true, "成功创建新订单", order.getId());
+        return CaResponse.makeResponse(true, "successCreated", order.getId());
     }
 
     /**
@@ -67,7 +67,7 @@ public class OrderController {
         List<String> itemStatus = orderMapper.findAllItemsStatus(id);
         for(String status: itemStatus){
             if(!OrderConstants.ORDER_ITEM_SERVED.equals(status)){
-                return CaResponse.makeResponse(false,"本订单仍有未上齐的菜", id);
+                return CaResponse.makeResponse(false,"dishesNotServedInThisOrder", id);
             }
         }
 
@@ -77,7 +77,7 @@ public class OrderController {
         order.setEndTime(new Date());
         orderMapper.update(order);
 
-        return CaResponse.makeResponse(true,"成功结束订单", id);
+        return CaResponse.makeResponse(true,"orderCompletedSuccessfully", id);
     }
 
     @DeleteMapping("/active/{id}")
@@ -94,7 +94,7 @@ public class OrderController {
         }
 
         orderMapper.delete(id);
-        return CaResponse.makeResponse(true, "成功删除该订单", id);
+        return CaResponse.makeResponse(true, "orderDeletedSuccessfully", id);
 
     }
 

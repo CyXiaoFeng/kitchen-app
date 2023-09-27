@@ -40,7 +40,7 @@ public class TableController {
             if(e instanceof DuplicateKeyException){
                 return CaResponse.makeResponse(false,"已存在同号餐桌:"+table.getTableNumber(), null);
             }
-            return CaResponse.makeResponse(false,"未知错误",null);
+            return CaResponse.makeResponse(false,"unknownError",null);
         }
     }
 
@@ -54,13 +54,13 @@ public class TableController {
             tableMapper.update(table);
         }catch (Exception e){
             if(e instanceof DataIntegrityViolationException){
-                return CaResponse.makeResponse(false, "不合法的输入或重名", null);
+                return CaResponse.makeResponse(false, "invalidInputOrDuplicateName", null);
             }else{
-                return CaResponse.makeResponse(false, "修改餐桌未知失败", null);
+                return CaResponse.makeResponse(false, "unknownErrorModifyingTable", null);
             }
         }
 
-        return CaResponse.makeResponse(true, "成功修改餐桌信息", id);
+        return CaResponse.makeResponse(true, "tableModifiedSuccessfully", id);
     }
 
     @DeleteMapping("/{id}")
@@ -71,11 +71,11 @@ public class TableController {
             if(e instanceof DataIntegrityViolationException){
                 return CaResponse.makeResponse(false,"该餐桌被引用，不能删除", id);
             }else{
-                return CaResponse.makeResponse(false, "未知错误", null);
+                return CaResponse.makeResponse(false, "unknownError", null);
             }
         }
 
-        return CaResponse.makeResponse(true, "成功删除餐桌", id);
+        return CaResponse.makeResponse(true, "tableDeletedSuccessfully", id);
     }
 
     @Autowired
@@ -105,13 +105,13 @@ public class TableController {
         // step 1: check if all items in served state
 
         if(orderId == null){
-            return CaResponse.makeResponse(false, "当前桌无进行中订单", id);
+            return CaResponse.makeResponse(false, "noOngoingOrderForCurrentTable", id);
         }
 
         List<String> itemStatus = orderMapper.findAllItemsStatus(orderId);
         for(String status: itemStatus){
             if(!OrderConstants.ORDER_ITEM_SERVED.equals(status)){
-                return CaResponse.makeResponse(false,"本订单仍有未上齐的菜", id);
+                return CaResponse.makeResponse(false,"dishesNotServedInThisOrder", id);
             }
         }
 
@@ -121,7 +121,7 @@ public class TableController {
         order.setEndTime(new Date());
         orderMapper.update(order);
 
-        return CaResponse.makeResponse(true,"成功结束订单", id);
+        return CaResponse.makeResponse(true,"orderCompletedSuccessfully", id);
     }
 
     @GetMapping("/all")
