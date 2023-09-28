@@ -42,7 +42,7 @@ public class ChineseScan {
     }
 
     public static void findChineseStrings(String line) {
-        Pattern pattern =  Pattern.compile("\"([\\u4e00-\\u9fa5]+)\"");; // 匹配中文字符的正则表达式
+        Pattern pattern =  Pattern.compile("\"([\\u4e00-\\u9fa5]+(?:，[\\u4e00-\\u9fa5]+)*)"); // 匹配中文字符的正则表达式
         Matcher matcher = pattern.matcher(line);
         while (matcher.find()) {
             String chineseString = matcher.group(1);

@@ -71,7 +71,7 @@ public class DishController {
             return CaResponse.makeResponse(true, "successfullyDeletedDish", id);
         }catch (Exception e){
             if(e instanceof DataIntegrityViolationException){
-                return CaResponse.makeResponse(false, "不能删除该菜品，因其被其他实体引用", id);
+                return CaResponse.makeResponse(false, "cannotDeleteTheDishBecauseItIsReferencedByOtherEntities", id);
             }
             return CaResponse.makeResponse(false, "unknownError", id);
         }
@@ -101,7 +101,7 @@ public class DishController {
             }
             // insert dish object
             dishMapper.insert(dish);
-            return CaResponse.makeResponse(true, "成功创建菜品:"+dish.getName(), dish.getId());
+            return CaResponse.makeResponse(true, String.format("{successfulCreationOfDishes}:%s",dish.getName()), dish.getId());
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
                 return CaResponse.makeResponse(false, "dishAlreadyExists", null);
@@ -141,7 +141,7 @@ public class DishController {
             }
             // 更新菜品
             dishMapper.update(origin);
-            return CaResponse.makeResponse(true, "成功更新菜品:"+dish.getName(), dish.getId());
+            return CaResponse.makeResponse(true, String.format("{successfulUpdateOfDishes}:%s",dish.getName()), dish.getId());
         }catch (Exception e){
             return CaResponse.makeResponse(false, "failedToUpdateDish", null);
         }

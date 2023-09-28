@@ -85,12 +85,12 @@ public class OrderController {
         Order order = orderMapper.findById(id);
         if(!OrderConstants.ORDER_ACTIVE.equals(order.getOrderStatus())){
             // not active order
-            return CaResponse.makeResponse(false, "该订单不是进行中订单，不可删除", id);
+            return CaResponse.makeResponse(false, "theOrderIsNotAnActiveOrderAndCannotBeDeleted", id);
         }
         Integer cnt = orderItemMapper.countByOrderId(id);
 
         if(cnt>0){
-            return CaResponse.makeResponse(false, "该订单仍有菜品未完成，不可删除", id);
+            return CaResponse.makeResponse(false, "theOrderStillHasUnfinishedDishesAndCannotBeDeleted", id);
         }
 
         orderMapper.delete(id);

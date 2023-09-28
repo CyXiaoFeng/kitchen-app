@@ -95,7 +95,7 @@ public class OrderItemController {
         }
 
         result.setOk(true);
-        result.setMessage("成功添加条目");
+        result.setMessage("itemAddedSuccessfully");
         result.setData(orderItem.getOrderId());
 
         return result;
@@ -146,7 +146,7 @@ public class OrderItemController {
         }catch (Exception e){
             LOG.error(e.getMessage());
             if(e instanceof DataIntegrityViolationException){
-                return CaResponse.makeResponse(false,"备注数据太长", null);
+                return CaResponse.makeResponse(false,"theNoteDataIsTooLong", null);
             }
         }
 

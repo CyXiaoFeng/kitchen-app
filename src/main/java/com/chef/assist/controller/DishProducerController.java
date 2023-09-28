@@ -39,7 +39,8 @@ public class DishProducerController {
         try{
             dishProducer.setStatus(KitchenConstants.OFFLINE);
             dishProducerMapper.insert(dishProducer);
-            return CaResponse.makeResponse(true, "成功创建厨位:"+dishProducer.getProducerNumber(),dishProducer.getProducerNumber());
+            return CaResponse.makeResponse(true, String.format("{successfullyCreatedKitchenStation}:%s",
+                    dishProducer.getProducerNumber()),dishProducer.getProducerNumber());
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
                 return CaResponse.makeResponse(false, "duplicateKitchenStationName", dishProducer.getProducerNumber());
@@ -171,7 +172,7 @@ public class DishProducerController {
             dishProducerMapper.deleteById(id);
         }catch (Exception e){
             if(e instanceof DataIntegrityViolationException){
-                return CaResponse.makeResponse(false,"该厨位被引用，不能删除", id);
+                return CaResponse.makeResponse(false,"theKitchenStationIsReferencedAndCannotBeDeleted", id);
             }
         }
         return CaResponse.makeResponse(true,"kitchenStationDeletedSuccessfully", id);

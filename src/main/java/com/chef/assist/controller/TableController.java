@@ -35,10 +35,10 @@ public class TableController {
     public CaResponse registerTable(@RequestBody Table table){
         try{
             tableMapper.insert(table);
-            return CaResponse.makeResponse(true,"成功创建餐桌:"+table.getTableNumber(), table.getTableNumber());
+            return CaResponse.makeResponse(true,String.format("{successfullyCreatedTable}:%s",table.getTableNumber()), table.getTableNumber());
         }catch (Exception e){
             if(e instanceof DuplicateKeyException){
-                return CaResponse.makeResponse(false,"已存在同号餐桌:"+table.getTableNumber(), null);
+                return CaResponse.makeResponse(false,String.format("{aTableWithTheSameNumberAlreadyExists}:%s",table.getTableNumber()), null);
             }
             return CaResponse.makeResponse(false,"unknownError",null);
         }
@@ -69,7 +69,7 @@ public class TableController {
             tableMapper.delete(id);
         }catch (Exception e){
             if(e instanceof DataIntegrityViolationException){
-                return CaResponse.makeResponse(false,"该餐桌被引用，不能删除", id);
+                return CaResponse.makeResponse(false,"theTableIsReferencedAndCannotBeDeleted", id);
             }else{
                 return CaResponse.makeResponse(false, "unknownError", null);
             }

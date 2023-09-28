@@ -121,10 +121,12 @@ public class UserController {
             if(e instanceof DuplicateKeyException){
                 return CaResponse.makeResponse(false,"usernameAlreadyExists", null);
             }
-            return CaResponse.makeResponse(false, "创建用户失败:"+e.getMessage(), null);
+            return CaResponse.makeResponse(false, "{failedToCreateTheUser}:"+e.getMessage(), null);
         }
 
-        return CaResponse.makeResponse(true, "成功创建"+role.getRoleName()+"角色的用户:"+user.getUsername()+",初始密码:"+defaultPassword, new UserVO(user.getId(), user.getUsername(), role.getRoleName()));
+        return CaResponse.makeResponse(true, String.format("{createdSuccessfully} %s {usersWithTheRole}:%s {initPassword}:%s",
+                role.getRoleName(),user.getUsername(),defaultPassword), new UserVO(user.getId(),
+                user.getUsername(), role.getRoleName()));
     }
 
     @PutMapping("/assign-role")
