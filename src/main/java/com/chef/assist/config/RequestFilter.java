@@ -10,9 +10,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,7 +55,7 @@ public class RequestFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         log.info("CORSFilter HTTP Request: method={}, uri={}",request.getMethod(), request.getRequestURI());
 
-        String originBase = env.getProperty("origin.base");
+        String originBase = env.getProperty("origin.base",request.getHeader("Origin"));
 
         // Authorize (allow) all domains to consume the content
         ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", originBase);
@@ -70,7 +73,11 @@ public class RequestFilter implements Filter {
         }
 
         // pass the request along the filter chain
+        log.info("session id = {},cookie={}",request.getSession().getId(),request.getCookies()!=null?
+                Arrays.stream(request.getCookies()).
+                        map(ck->ck.getName()+"="+ck.getValue()).collect(Collectors.joining(",")):"");
         chain.doFilter(request, servletResponse);
+
     }
 
     /**
