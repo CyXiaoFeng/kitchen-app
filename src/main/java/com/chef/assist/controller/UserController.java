@@ -13,6 +13,8 @@ import com.chef.assist.model.request.CreateUserRequest;
 import com.chef.assist.utils.MyStringUtil;
 import com.chef.assist.utils.SecurityUtil;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
@@ -30,6 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -43,6 +46,9 @@ public class UserController {
 
     private String currentUserName(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(null != authentication) {
+            log.info(authentication.getPrincipal().toString());
+        }
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
             return currentUserName;
