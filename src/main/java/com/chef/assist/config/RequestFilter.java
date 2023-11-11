@@ -71,19 +71,6 @@ public class RequestFilter implements Filter {
             resp.setStatus(HttpServletResponse.SC_ACCEPTED);
             return;
         }
-        // pass the request along the filter chain
-        String reqSessionId = request.getSession().getId();
-        String reqCookie = request.getCookies()!=null?
-                Arrays.stream(request.getCookies()).
-                        map(ck->ck.getName()+"="+ck.getValue()).collect(Collectors.joining(",")):"";
-        log.info("reqSessionId = {},reqCookie={}",reqSessionId,reqCookie);
-        String setCookie = resp.getHeader("Set-Cookie");
-        if(null != setCookie && reqCookie.isEmpty()) {
-            resp.setHeader("Set-Cookie",setCookie+";SameSite=None;Secure");
-            setCookie = resp.getHeader("Set-Cookie");
-            log.info("respcookie:{}",setCookie);
-        }
-//        resp.setHeader("Set-Cookie",String.format("JSESSIONID=9329145234626828C1E53C88386E2981;SameSite=None;Secure"));
         chain.doFilter(request, resp);
 
 

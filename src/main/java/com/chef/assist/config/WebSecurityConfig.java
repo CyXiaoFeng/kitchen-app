@@ -46,24 +46,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/sample/**").permitAll()
-                .antMatchers("/api/v1/**").hasAnyRole("ROLE_USER")
-                .anyRequest().authenticated()
+                .antMatchers("/api/v1/**")
+                .authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().formLogin().successHandler(authenticationSuccessHandler)
                 .and().formLogin().failureHandler(authenticationFailureHandler)
                 .and().logout().logoutSuccessUrl("/login")
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .sessionFixation().migrateSession();
-    /*.invalidateHttpSession(true) // 使HttpSession失效
-                .deleteCookies("JSESSIONID").and()
-                        .sessionManagement()
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(true)
-                .sessionRegistry(sessionRegistry());*/
-
-        // CSRF tokens handling
-        httpSecurity.addFilterAfter(new CsrfTokenResponseHeaderBindingFilter(), CsrfFilter.class);
+//                .and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                .sessionFixation().migrateSession()
+                .and().addFilterAfter(new CsrfTokenResponseHeaderBindingFilter(), CsrfFilter.class);
 
     }
 
